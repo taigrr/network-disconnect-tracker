@@ -1,0 +1,6 @@
+ssid:STRING,
+bssid:STRING,
+channel:INTEGER,
+loop:STRING,
+rssi:INTEGER,
+timestamp:TIMESTAMP
