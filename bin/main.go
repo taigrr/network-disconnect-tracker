@@ -57,7 +57,7 @@ func main() {
 		os.Exit(1)
 	}
 	storage, err := tstorage.NewStorage(
-		tstorage.WithDataPath("./data/ts"),
+		tstorage.WithDataPath("/var/lib/network-disconnect-tracker/data/ts"),
 		tstorage.WithTimestampPrecision(tstorage.Seconds),
 	)
 	if err != nil {
@@ -65,7 +65,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer storage.Close()
-	db, err := bitcask.Open("./data/bc")
+	db, err := bitcask.Open("/var/lib/network-disconnect-tracker/data/bc")
 	if err != nil {
 		storage.Close()
 		fmt.Printf("Error: could not initialize keyval database: %v\n", err)
@@ -197,7 +197,9 @@ func sendData(storage *tstorage.Storage, bc *bitcask.Bitcask) {
 				log.Printf("Data posted to: %s", endpoint)
 				return true
 			}(m)
-			time.Sleep(time.Minute * 5)
+			if !dataSent {
+				time.Sleep(time.Minute * 5)
+			}
 		}
 
 		var keyset [][]byte
@@ -307,7 +309,7 @@ func connected() (ok bool) {
 
 func checkConnection(storage *tstorage.Storage) {
 	for {
-		time.Sleep(time.Millisecond * 1500)
+		time.Sleep(time.Minute)
 		value := 0.0
 		if connected() {
 			value = 1.0
@@ -340,7 +342,7 @@ func checkPing(storage *tstorage.Storage) {
 				},
 			})
 		}
-		time.Sleep(time.Second * 15)
+		time.Sleep(time.Second * 30)
 	}
 }
 func getNetworks(wc *wireless.Client, db *bitcask.Bitcask) {
@@ -352,13 +354,13 @@ func getNetworks(wc *wireless.Client, db *bitcask.Bitcask) {
 			log.Printf("Error scanning: %v \n", err)
 		}
 		var networks NetworkCollection
+		now := time.Now()
 		for _, ap := range aps {
-			n := Network{SSID: ap.SSID, BSSID: ap.BSSID.String(), Channel: uint(ap.Frequency), RSSI: ap.Signal}
+			n := Network{SSID: ap.SSID, BSSID: ap.BSSID.String(), Channel: ap.Frequency, RSSI: ap.Signal, Timestamp: now}
 			networks = append(networks, n)
 		}
-		now := time.Now()
 		db.Put([]byte(strconv.Itoa(int(now.Unix()))), encodeNetworks(networks))
-		time.Sleep(time.Minute / 6)
+		time.Sleep(time.Minute)
 	}
 }
 

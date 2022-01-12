@@ -84,7 +84,7 @@ func Insert(data MetricSet, loop string) {
 }
 
 func queryNetworks(ctx context.Context, client *bigquery.Client, data NetworkCollection, loop string) error {
-	qstring := `INSERT INTO ` + projectID + "." + ssidsDataSet + "." + ssidsTableName + `(ssids, bssid, channel, loop,rssi,timestamp) VALUES`
+	qstring := `INSERT INTO ` + projectID + "." + ssidsDataSet + "." + ssidsTableName + `(ssid,bssid,channel,loop,rssi,timestamp) VALUES`
 	qps := []bigquery.QueryParameter{}
 	for i, network := range data {
 		if i == len(data)-1 {
@@ -101,6 +101,7 @@ func queryNetworks(ctx context.Context, client *bigquery.Client, data NetworkCol
 			{Value: network.Timestamp}}...)
 	}
 	query := client.Query(qstring)
+	query.Parameters = qps
 	job, err := query.Run(ctx)
 	if err != nil {
 		log.Printf("Error creating ssids query job: %s", err.Error())

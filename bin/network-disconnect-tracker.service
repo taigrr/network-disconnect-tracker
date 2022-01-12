@@ -1,0 +1,15 @@
+[Unit]
+Description=Network Disconnect Tracker
+After=network-online.target
+[Service]
+Type=simple
+User=root
+ExecStart=/usr/local/bin/network-disconnect-tracker
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+EnvironmentFile=/etc/network-disconnect-tracker/environment

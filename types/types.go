@@ -14,7 +14,7 @@ type PingCollection []Ping
 type Network struct {
 	SSID      string    `json:"ssid"`
 	BSSID     string    `json:"bssid"`
-	Channel   uint      `json:"channel"`
+	Channel   int      `json:"channel"`
 	RSSI      int       `json:"rssi"`
 	Timestamp time.Time `json:"timestamp"`
 }
