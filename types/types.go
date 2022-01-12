@@ -30,7 +30,7 @@ type MetricSet struct {
 
 type Ping struct {
 	Timestamp time.Time `json:"timestamp"`
-	RTT       float64   `json:"rtt"`
+	RTT       int64`json:"rtt"`
 }
 
 func (n Network) String() string {

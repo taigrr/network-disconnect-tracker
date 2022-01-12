@@ -127,7 +127,7 @@ func sendData(storage *tstorage.Storage, bc *bitcask.Bitcask) {
 	lastTime := time.Now()
 	points, _ := (*storage).Select("ping", nil, startTime.Unix(), lastTime.Unix())
 	for _, p := range points {
-		m.Pings = append(m.Pings, Ping{Timestamp: time.Unix(p.Timestamp, 0), RTT: p.Value})
+		m.Pings = append(m.Pings, Ping{Timestamp: time.Unix(p.Timestamp, 0), RTT: int64(p.Value)})
 	}
 	connections, _ := (*storage).Select("connectivity", nil, startTime.Unix(), lastTime.Unix())
 	for _, p := range connections {
@@ -152,7 +152,7 @@ func sendData(storage *tstorage.Storage, bc *bitcask.Bitcask) {
 		newTime := time.Now()
 		points, _ := (*storage).Select("ping", nil, lastTime.Unix(), newTime.Unix())
 		for _, p := range points {
-			m.Pings = append(m.Pings, Ping{Timestamp: time.Unix(p.Timestamp, 0), RTT: p.Value})
+			m.Pings = append(m.Pings, Ping{Timestamp: time.Unix(p.Timestamp, 0), RTT: int64(p.Value)})
 		}
 		connections, _ := (*storage).Select("connectivity", nil, lastTime.Unix(), newTime.Unix())
 		for _, p := range connections {
@@ -216,6 +216,7 @@ func sendData(storage *tstorage.Storage, bc *bitcask.Bitcask) {
 			}
 		}
 		lastTime = newTime
+		m = MetricSet{}
 		bc.Put([]byte("startKey"), []byte(strconv.Itoa(int(newTime.Unix()))))
 		time.Sleep(time.Hour)
 	}
