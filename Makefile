@@ -31,7 +31,8 @@ clean:
 	rm -f main $(FNAME)
 
 install: clean main
-	mv $(FNAME) "$$GOPATH/bin/$(PKG)"
+	sudo install -Dm00644 network-disconnect-tracker.service $(DESTDIR)$(PREFIX)/lib/systemd/system/network-disconnect-tracker.service
+	sudo install -Dm00755 ./build/main /usr/local/bin/network-disconnect-tracker
 
 vet: 
 	@echo "Running go vet..."

@@ -338,7 +338,7 @@ func checkPing(storage *tstorage.Storage) {
 			(*storage).InsertRows([]tstorage.Row{
 				{
 					Metric:    "ping",
-					DataPoint: tstorage.DataPoint{Timestamp: time.Now().Unix(), Value: float64(stats.AvgRtt.Microseconds())},
+					DataPoint: tstorage.DataPoint{Timestamp: time.Now().Unix(), Value: float64(stats.AvgRtt.Milliseconds())},
 				},
 			})
 		}

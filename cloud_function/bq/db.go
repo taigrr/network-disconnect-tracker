@@ -67,19 +67,23 @@ func Insert(data MetricSet, loop string) {
 	}
 	defer client.Close()
 
-	err = queryConnectivity(ctx, client, data.Connectivity, loop)
-	if err != nil {
-		log.Panicf("bigquery insertion fail: %v", err)
+	if len(data.Connectivity) > 0 {
+		err = queryConnectivity(ctx, client, data.Connectivity, loop)
+		if err != nil {
+			log.Panicf("bigquery insertion fail: %v", err)
+		}
 	}
-
-	err = queryPings(ctx, client, data.Pings, loop)
-	if err != nil {
-		log.Panicf("bigquery insertion fail: %v", err)
+	if len(data.Pings) > 0 {
+		err = queryPings(ctx, client, data.Pings, loop)
+		if err != nil {
+			log.Panicf("bigquery insertion fail: %v", err)
+		}
 	}
-
-	err = queryNetworks(ctx, client, data.Networks, loop)
-	if err != nil {
-		log.Panicf("bigquery insertion fail: %v", err)
+	if len(data.Networks) > 0 {
+		err = queryNetworks(ctx, client, data.Networks, loop)
+		if err != nil {
+			log.Panicf("bigquery insertion fail: %v", err)
+		}
 	}
 }
 
